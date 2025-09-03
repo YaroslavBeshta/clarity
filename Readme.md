@@ -51,4 +51,4 @@ Clarity does not collect or send any data. All rules and logs stay in your brows
 
 ## Contributions
 
-If you experience any issues, please open an issue at [Issues](https://github.com/your-org/your-repo/issues).
+If you experience any issues, please open an issue at [Issues](https://github.com/YaroslavBeshta/clarity/issues).
