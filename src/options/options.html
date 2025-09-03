@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta charset="utf-8" />
+    <title>Clarity</title>
+    <link rel="stylesheet" href="./options.css">
+    <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+</head>
+
+<body>
+    <div class="card">
+        <h2>Destination Rules</h2>
+        <div class="muted">
+            Enter a regex. Examples:
+            <code>youtube.com/shorts/*</code>
+        </div>
+
+        <form class="submit-button" id="add-form">
+            <input id="rule-input" type="text" placeholder="Regex to match the destination URL" required />
+            <button type="submit">Add rule</button>
+            <span id="message" class="error" hidden></span>
+        </form>
+
+        <ul id="rule-list"></ul>
+    </div>
+
+    <div class="card">
+        <h2>Seen URLs</h2>
+
+        <div class="controls">
+            <label>
+                <input type="checkbox" id="logging-enabled">
+                Enable logging of matched URLs
+            </label>
+            <input id="filter-input" type="text" placeholder="Filter by URL or rule" />
+            <button id="clear-log">Clear log</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>URL</th>
+                    <th>Matched Rule</th>
+                    <th class="nowrap">Source</th>
+                    <th class="right nowrap">Time</th>
+                </tr>
+            </thead>
+            <tbody id="seen-body">
+                <!-- rows injected here -->
+            </tbody>
+        </table>
+
+        <div class="muted" id="seen-empty" hidden>No matches yet.</div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+
+</html>

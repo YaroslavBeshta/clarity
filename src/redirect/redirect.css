@@ -1,0 +1,57 @@
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  /* Apply box-sizing for more predictable layout behavior */
+  box-sizing: border-box;
+  /* Set a default text color for better readability across the page */
+  color: #333; /* A soft dark grey */
+  /* Improve default line-height for better text readability */
+  line-height: 1.6;
+  /* Enhance font rendering for a smoother appearance */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw; /* Ensure full viewport width */
+  background: #75774c; /* Fallback background color */
+  margin: 0;
+  padding: 0; /* Remove any default padding */
+  background-image: url("../images/redirect-background.png"),
+    linear-gradient(135deg, #ddd3b6 0%, #e0d3b5 100%); /* Gradient fallback */
+  background-size: contain, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed; /* Better mobile behavior */
+  overflow-x: hidden; /* Prevent horizontal scrolling on mobile */
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll; /* Better performance on mobile */
+    min-height: 100vh;
+    min-height: -webkit-fill-available; /* iOS Safari fix */
+  }
+}
+
+a.button {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 10px 18px;
+  background: #75774c;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+a.button:hover {
+  background: #979968;
+}
