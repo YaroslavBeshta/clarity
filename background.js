@@ -108,7 +108,7 @@ function extractGoogleDestination(url) {
 
 // ------------------- Handlers -------------------
 function handleBeforeRequest(details) {
-  const url = details.url;
+  const { url, tabId } = details;
   if (isAtTarget(url)) return {};
 
   // Google wrapped redirect
@@ -117,7 +117,15 @@ function handleBeforeRequest(details) {
     if (dest && !isAtTarget(dest) && matchesAny(dest, compiledRules)) {
       const matchedRule = findMatchingRuleString(dest);
       recordMatch({ url: dest, source: "Google-wrapped", matchedRule });
-      return { redirectUrl: TARGET };
+      // Navigate tab directly, then cancel this request
+      if (tabId >= 0) {
+        try {
+          browser.tabs.update(tabId, { url: TARGET });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return { cancel: true };
     }
     return {};
   }
@@ -126,16 +134,23 @@ function handleBeforeRequest(details) {
   if (matchesAny(url, compiledRules)) {
     const matchedRule = findMatchingRuleString(url);
     recordMatch({ url, source: "webRequest", matchedRule });
-    return { redirectUrl: TARGET };
+    if (tabId >= 0) {
+      try {
+        browser.tabs.update(tabId, { url: TARGET });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return { cancel: true };
   }
   return {};
 }
 
-function shouldRedirectYouTube(url) {
+function shouldRedirectSPA(url) {
   try {
     const u = new URL(url);
-    if (!/^(?:www\.|m\.)?youtube\.com$/i.test(u.hostname)) return false;
-    return /^\/shorts\/[^/?#]+/i.test(u.pathname) && !isAtTarget(url);
+    // Check if the URL matches any of your compiled rules
+    return matchesAny(url, compiledRules) && !isAtTarget(url);
   } catch {
     return false;
   }
@@ -151,11 +166,11 @@ browser.webRequest.onBeforeRequest.addListener(
 browser.webNavigation.onHistoryStateUpdated.addListener(
   async ({ tabId, url, frameId }) => {
     if (frameId !== 0) return;
-    if (shouldRedirectYouTube(url)) {
+    if (shouldRedirectSPA(url)) {
       recordMatch({
         url,
-        source: "YouTube-SPA-historyState",
-        matchedRule: "/youtube\\.com\\/shorts\\//",
+        source: "SPA-historyState",
+        matchedRule: null, // No specific rule for SPA history state
       });
       try {
         await browser.tabs.update(tabId, { url: TARGET });
@@ -163,18 +178,17 @@ browser.webNavigation.onHistoryStateUpdated.addListener(
         console.error(e);
       }
     }
-  },
-  { url: [{ hostSuffix: "youtube.com" }] }
+  }
 );
 
 browser.webNavigation.onCommitted.addListener(
   async ({ tabId, url, frameId }) => {
     if (frameId !== 0) return;
-    if (shouldRedirectYouTube(url)) {
+    if (shouldRedirectSPA(url)) {
       recordMatch({
         url,
-        source: "YouTube-SPA-committed",
-        matchedRule: "/youtube\\.com\\/shorts\\//",
+        source: "SPA-committed",
+        matchedRule: null, // No specific rule for SPA committed
       });
       try {
         await browser.tabs.update(tabId, { url: TARGET });
@@ -182,8 +196,7 @@ browser.webNavigation.onCommitted.addListener(
         console.error(e);
       }
     }
-  },
-  { url: [{ hostSuffix: "youtube.com" }] }
+  }
 );
 
 // ------------------- Init -------------------
